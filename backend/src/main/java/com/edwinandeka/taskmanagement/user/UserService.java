@@ -32,15 +32,6 @@ public class UserService {
 
         final User savedUser = userRepository.save(user);
 
-        return mapToResponse(savedUser);
-    }
-
-    private UserResponseDto mapToResponse(final User user) {
-        return new UserResponseDto(
-                user.getId(),
-                user.getFullName(),
-                user.getEmail(),
-                user.getRole()
-        );
+        return UserResponseDto.from(savedUser);
     }
 }

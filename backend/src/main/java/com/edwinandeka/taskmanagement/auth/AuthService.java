@@ -36,18 +36,11 @@ public class AuthService {
         final User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + request.email()));
 
-        final UserResponseDto userResponse = new UserResponseDto(
-                user.getId(),
-                user.getFullName(),
-                user.getEmail(),
-                user.getRole()
-        );
-
         return new LoginResponseDto(
                 accessToken,
                 "Bearer",
                 jwtService.getExpirationSeconds(),
-                userResponse
+                UserResponseDto.from(user)
         );
     }
 }
