@@ -62,8 +62,9 @@ public class TaskController {
     @PatchMapping("/{id}/status")
     public TaskResponseDto updateStatus(
             @PathVariable final Long id,
-            @Valid @RequestBody final TaskStatusUpdateDto request
+            @Valid @RequestBody final TaskStatusUpdateDto request,
+            final Authentication authentication
     ) {
-        return taskService.updateStatus(id, request);
+        return taskService.updateStatus(id, request, authentication.getName());
     }
 }

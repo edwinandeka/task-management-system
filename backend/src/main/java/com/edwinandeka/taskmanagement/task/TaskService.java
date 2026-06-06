@@ -14,13 +14,16 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final TaskStatusHistoryRepository taskStatusHistoryRepository;
 
     public TaskService(
             final TaskRepository taskRepository,
-            final UserRepository userRepository
+            final UserRepository userRepository,
+            final TaskStatusHistoryRepository taskStatusHistoryRepository
     ) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.taskStatusHistoryRepository = taskStatusHistoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -35,6 +38,16 @@ public class TaskService {
         final Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
         return toResponse(task);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaskHistoryResponseDto> findHistoryByTaskId(final Long taskId) {
+        if (!taskRepository.existsById(taskId)) {
+            throw new ResourceNotFoundException("Task not found with id: " + taskId);
+        }
+        return taskStatusHistoryRepository.findAllByTaskIdOrderByChangedAtAsc(taskId).stream()
+                .map(TaskService::toHistoryResponse)
+                .toList();
     }
 
     @Transactional
@@ -78,11 +91,29 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskResponseDto updateStatus(final Long id, final TaskStatusUpdateDto request) {
+    public TaskResponseDto updateStatus(
+            final Long id,
+            final TaskStatusUpdateDto request,
+            final String currentUserEmail
+    ) {
         final Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
-        task.setStatus(request.status());
+        final TaskStatus previousStatus = task.getStatus();
+        final TaskStatus newStatus = request.status();
+
+        if (previousStatus != newStatus) {
+            final User changedBy = loadUserByEmail(currentUserEmail);
+            final TaskStatusHistory historyEntry = TaskStatusHistory.builder()
+                    .task(task)
+                    .fromStatus(previousStatus)
+                    .toStatus(newStatus)
+                    .changedBy(changedBy)
+                    .build();
+            taskStatusHistoryRepository.save(historyEntry);
+            task.setStatus(newStatus);
+        }
+
         return toResponse(taskRepository.save(task));
     }
 
@@ -97,6 +128,17 @@ public class TaskService {
         }
         return userRepository.findById(assignedToId)
                 .orElseThrow(() -> new ResourceNotFoundException("Assignee not found with id: " + assignedToId));
+    }
+
+    private static TaskHistoryResponseDto toHistoryResponse(final TaskStatusHistory history) {
+        return new TaskHistoryResponseDto(
+                history.getId(),
+                history.getTask().getId(),
+                history.getFromStatus(),
+                history.getToStatus(),
+                UserResponseDto.from(history.getChangedBy()),
+                history.getChangedAt()
+        );
     }
 
     private static TaskResponseDto toResponse(final Task task) {
