@@ -6,8 +6,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,9 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
-    public AuthController(final UserService userService) {
+    public AuthController(
+            final UserService userService,
+            final AuthService authService
+    ) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping("/register")
@@ -29,5 +34,11 @@ public class AuthController {
                 "User registered successfully",
                 user
         );
+    }
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public LoginResponseDto login(@Valid @RequestBody final LoginRequestDto request) {
+        return authService.login(request);
     }
 }

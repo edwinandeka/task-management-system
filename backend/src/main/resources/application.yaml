@@ -21,3 +21,9 @@ spring:
 
   jackson:
     time-zone: UTC
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-change-me-please-min-32-bytes-long-aaaaaa}
+    issuer: task-management-api
+    expiration-minutes: 60
