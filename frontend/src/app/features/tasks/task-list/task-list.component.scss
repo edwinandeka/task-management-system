@@ -1,0 +1,119 @@
+.task-list-toolbar {
+  &__spacer {
+    flex: 1 1 auto;
+  }
+
+  &__user {
+    margin-right: 1rem;
+    font-size: 0.95rem;
+    opacity: 0.9;
+  }
+}
+
+.task-list-page {
+  display: block;
+  max-width: 1080px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+
+    h1 {
+      margin: 0;
+      font-weight: 500;
+      font-size: 1.75rem;
+    }
+
+    button mat-icon {
+      margin-right: 0.25rem;
+      vertical-align: middle;
+    }
+  }
+
+  &__state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    color: rgba(0, 0, 0, 0.55);
+    gap: 0.5rem;
+  }
+
+  &__empty-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    opacity: 0.4;
+  }
+}
+
+.task-list-table {
+  width: 100%;
+
+  &__link {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__actions {
+    white-space: nowrap;
+  }
+
+  &__actions-header {
+    text-align: right;
+  }
+}
+
+.status-chip,
+.priority-chip {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.status-chip {
+  &--pending {
+    background: #fff4d6;
+    color: #8a5a00;
+  }
+  &--in-progress {
+    background: #d8e7ff;
+    color: #134a99;
+  }
+  &--completed {
+    background: #d6f1dd;
+    color: #196b35;
+  }
+  &--cancelled {
+    background: #ececec;
+    color: #555;
+  }
+}
+
+.priority-chip {
+  &--low {
+    background: #eef4f8;
+    color: #466a82;
+  }
+  &--medium {
+    background: #fff1e0;
+    color: #8a5300;
+  }
+  &--high {
+    background: #ffe1e1;
+    color: #a82020;
+  }
+}

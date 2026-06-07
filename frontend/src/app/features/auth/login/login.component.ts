@@ -58,7 +58,7 @@ export class LoginComponent {
 
     this.authService.login(this.form.getRawValue()).subscribe({
       next: () => {
-        const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') ?? '/dashboard';
+        const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') ?? '/tasks';
         this.router.navigateByUrl(redirectTo);
       },
       error: (error: HttpErrorResponse) => {

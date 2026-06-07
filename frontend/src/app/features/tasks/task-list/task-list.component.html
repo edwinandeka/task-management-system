@@ -1,0 +1,85 @@
+<mat-toolbar color="primary">
+  <span>Task Management System</span>
+  <span class="task-list-toolbar__spacer"></span>
+  @if (currentUser(); as user) {
+    <span class="task-list-toolbar__user">{{ user.fullName }} · {{ user.role }}</span>
+  }
+  <button mat-icon-button aria-label="Logout" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<main class="task-list-page">
+  <header class="task-list-page__header">
+    <h1>Tasks</h1>
+    <button mat-flat-button color="primary" routerLink="/tasks/new">
+      <mat-icon>add</mat-icon>
+      New task
+    </button>
+  </header>
+
+  <mat-card appearance="outlined">
+    @if (isLoading()) {
+      <div class="task-list-page__state">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (tasks().length === 0) {
+      <div class="task-list-page__state">
+        <mat-icon class="task-list-page__empty-icon">inbox</mat-icon>
+        <p>No tasks yet. Create the first one.</p>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="tasks()" class="task-list-table">
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Title</th>
+          <td mat-cell *matCellDef="let task">
+            <a [routerLink]="['/tasks', task.id]" class="task-list-table__link">{{ task.title }}</a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let task">
+            <span [ngClass]="statusClass(task.status)">{{ task.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef>Priority</th>
+          <td mat-cell *matCellDef="let task">
+            <span [ngClass]="priorityClass(task.priority)">{{ task.priority }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="assignedTo">
+          <th mat-header-cell *matHeaderCellDef>Assigned to</th>
+          <td mat-cell *matCellDef="let task">
+            {{ task.assignedTo ? task.assignedTo.fullName : '—' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dueDate">
+          <th mat-header-cell *matHeaderCellDef>Due date</th>
+          <td mat-cell *matCellDef="let task">
+            {{ task.dueDate ? (task.dueDate | date: 'mediumDate') : '—' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="task-list-table__actions-header">Actions</th>
+          <td mat-cell *matCellDef="let task" class="task-list-table__actions">
+            <button mat-icon-button [routerLink]="['/tasks', task.id]" aria-label="View task">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button [routerLink]="['/tasks', task.id, 'edit']" aria-label="Edit task">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    }
+  </mat-card>
+</main>

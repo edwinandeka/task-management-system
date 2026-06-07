@@ -3,6 +3,9 @@ package com.edwinandeka.taskmanagement.user;
 import com.edwinandeka.taskmanagement.auth.RegisterRequestDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -33,5 +36,12 @@ public class UserService {
         final User savedUser = userRepository.save(user);
 
         return UserResponseDto.from(savedUser);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserResponseDto> findAll() {
+        return userRepository.findAll().stream()
+                .map(UserResponseDto::from)
+                .toList();
     }
 }

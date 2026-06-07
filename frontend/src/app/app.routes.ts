@@ -9,11 +9,12 @@ export const routes: Routes = [
       import('./features/auth/login/login.component').then((m) => m.LoginComponent)
   },
   {
-    path: 'dashboard',
+    path: 'tasks',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
+      import('./features/tasks/task-list/task-list.component').then((m) => m.TaskListComponent)
   },
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '', pathMatch: 'full', redirectTo: 'tasks' },
+  { path: 'dashboard', redirectTo: 'tasks' },
+  { path: '**', redirectTo: 'tasks' }
 ];
